@@ -1,0 +1,31 @@
+name: BloodFX
+main: hoyinm14mc\bloodfx\BloodFX
+api: ["3.0.0-ALPHA11"]
+version: 1.1.0
+author: hoyinm14mc & CyberCube-HK Team & updated by CupidonSauce173
+
+commands:
+  bloodfx:
+    usage: /bloodfx help
+    permission: bloodfx.command
+    description: Command of BloodFX
+    aliases: ["blood", "bld"]
+
+permissions:
+  bloodfx.command:
+    default: op
+    children:
+      bloodfx.command.set:
+        default: op
+      bloodfx.command.reload:
+        default: op
+      bloodfx.command.get:
+        default: op
+      bloodfx.command.list:
+        default: op
+      bloodfx.command.on:
+        default: op
+      bloodfx.command.off:
+        default: op
+      bloodfx.command.help:
+        default: op
