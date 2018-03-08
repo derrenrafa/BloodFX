@@ -1,0 +1,117 @@
+<?php
+
+/*
+ * This file is a part of BloodFX.
+ * Copyright (C) 2018 CupidonSauce173
+ *
+ * BloodFX is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * BloodFX is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with BloodFX. If not, see <http://www.gnu.org/licenses/>.
+ */
+namespace hoyinm14mc\bloodfx;
+
+use pocketmine\event\Listener;
+use hoyinm14mc\bloodfx\BloodFX;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\entity\Chicken;
+use pocketmine\entity\Cow;
+use pocketmine\entity\Creeper;
+use pocketmine\entity\Enderman;
+use pocketmine\entity\Human;
+use pocketmine\Player;
+use pocketmine\entity\Ozelot;
+use pocketmine\entity\Pig;
+use pocketmine\entity\PigZombie;
+use pocketmine\entity\Silverfish;
+use pocketmine\entity\Skeleton;
+use pocketmine\entity\Slime;
+use pocketmine\entity\Spider;
+use pocketmine\entity\Squid;
+use pocketmine\entity\Villager;
+use pocketmine\entity\Wolf;
+use pocketmine\entity\Zombie;
+
+class EventListener implements Listener{
+
+	private $plugin;
+
+	public function __construct(BloodFX $plugin){
+		$this->plugin = $plugin;
+	}
+
+	public function onDamage(EntityDamageEvent $event){
+		if($event->isCancelled() !== false){
+			return false;
+		}
+		$entity = $event->getEntity();
+		if($entity instanceof Chicken){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "chicken");
+		}
+		if($entity instanceof Cow){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "cow");
+		}
+		if($entity instanceof Creeper){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "creeper");
+		}
+		if($entity instanceof Enderman){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "enderman");
+		}
+		if($entity instanceof Human || $entity instanceof Player){
+			if($entity instanceof Player){
+				if($this->plugin->disabled->exists($entity->getName())){
+					return false;
+				}
+				$this->plugin->sprayBlood($entity, $event->getDamage(), "player");
+			} else{
+				$this->plugin->sprayBlood($entity, $event->getDamage(), "human");
+			}
+		}
+		if($entity instanceof Ozelot){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "ozelot");
+		}
+		if($entity instanceof Pig){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "pig");
+		}
+		if($entity instanceof PigZombie){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "pigzombie");
+		}
+		if($entity instanceof Sheep){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "sheep");
+		}
+		if($entity instanceof Silverfish){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "silverfish");
+		}
+		if($entity instanceof Skeleton){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "skeleton");
+		}
+		if($entity instanceof Slime){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "slime");
+		}
+		if($entity instanceof Spider){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "spider");
+		}
+		if($entity instanceof Squid){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "squid");
+		}
+		if($entity instanceof Villager){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "villager");
+		}
+		if($entity instanceof Wolf){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "wolf");
+		}
+		if($entity instanceof Zombie){
+			$this->plugin->sprayBlood($entity, $event->getDamage(), "zombie");
+		}
+	}
+
+}
+?>
