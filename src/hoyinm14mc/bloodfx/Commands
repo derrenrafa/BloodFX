@@ -1,0 +1,181 @@
+<?php
+
+/*
+ * This file is a part of BloodFX.
+ * Copyright (C) 2018 CupidonSauce173
+ *
+ * BloodFX is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * BloodFX is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with BloodFX. If not, see <http://www.gnu.org/licenses/>.
+ */
+namespace hoyinm14mc\bloodfx;
+
+use pocketmine\plugin\PluginBase;
+use pocketmine\command\CommandExecutor;
+use hoyinm14mc\bloodfx\BloodFX;
+use pocketmine\command\CommandSender;
+use pocketmine\command\Command;
+use pocketmine\Player;
+
+class Commands extends PluginBase implements CommandExecutor{
+
+	public $plugin;
+
+	public function __construct(BloodFX $plugin){
+		$this->plugin = $plugin;
+	}
+
+	public function onCommand(CommandSender $issuer, Command $cmd, $label,  array $args) : bool{
+		switch($cmd->getName()){
+			case "bloodfx":
+				if(isset($args[0])){
+					switch($args[0]){
+						case "reload":
+							if($issuer->hasPermission("bloodfx.command") || $issuer->hasPermission("bloodfx.command.reload")){
+								$this->plugin->getConfig()->reload();
+								$this->plugin->data->reload();
+								$issuer->sendMessage($this->plugin->colourMessage("&aBloodFX's configuration file has been reloaded successfully!"));
+								return true;
+							} else{
+								$issuer->sendMessage($this->plugin->colourMessage("&cYou don't have permission for this!"));
+								return true;
+							}
+						break;
+						case "set":
+							$c = $this->plugin->data->getAll();
+							if($issuer->hasPermission("bloodfx.command") || $issuer->hasPermission("bloodfx.command.set")){
+								if(isset($args[1]) && isset($args[2])){
+									if(isset($c["entities"][$args[1]])){
+										if(is_numeric($args[2])){
+											$c["entities"][$args[1]] = intval($args[2]);
+											$this->plugin->data->setAll($c);
+											$this->plugin->data->save();
+											$issuer->sendMessage($this->plugin->colourMessage("&aBlood particle changed successfully for " . $args[1]));
+											return true;
+										} else{
+											$issuer->sendMessage($this->plugin->colourMessage("&cInvalid block ID!!"));
+											return true;
+										}
+									} else{
+										$issuer->sendMessage($this->plugin->colourMessage("&cEntity doesn't exist!"));
+										return true;
+									}
+								} else{
+									$issuer->sendMessage("Usage: /bloodfx set <entity> <block_id>");
+									return true;
+								}
+							} else{
+								$issuer->sendMessage($this->plugin->colourMessage("&cYou don't have permission for this!"));
+								return true;
+							}
+						break;
+						case "entities":
+						case "list":
+							$c = $this->plugin->data->getAll();
+							if($issuer->hasPermission("bloodfx.command") || $issuer->hasPermission("bloodfx.command.get")){
+								$msg = "";
+								foreach(array_keys($c["entities"]) as $entities){
+									$msg .= $entities . ", ";
+								}
+								$issuer->sendMessage($this->plugin->colourMessage("&aList of entities: &6" . substr($msg, 0, - 2)));
+								return true;
+							} else{
+								$issuer->sendMessage($this->plugin->colourMessage("&cYou don't have permission for this!"));
+								return true;
+							}
+						break;
+						case "get":
+							$c = $this->plugin->data->getAll();
+							if($issuer->hasPermission("bloodfx.command") || $issuer->hasPermission("bloodfx.command.get")){
+								if(isset($args[1])){
+									if(isset($c["entities"][$args[1]])){
+										$issuer->sendMessage($this->plugin->colourMessage("&aBlood of " . $args[1] . ": &6" . $c["entities"][$args[1]]));
+										return true;
+									} else{
+										$issuer->sendMessage($this->plugin->colourMessage("&cEntity doesn't exist!"));
+										return true;
+									}
+								} else{
+									$issuer->sendMessage("Usage: /bloodfx get <entity>");
+									return true;
+								}
+							} else{
+								$issuer->sendMessage($this->plugin->colourMessage("&cYou don't have permission for this!"));
+								return true;
+							}
+						break;
+						case "on":
+							if($issuer->hasPermission("bloodfx.command") || $issuer->hasPermission("bloodfx.command.on")){
+								if($issuer instanceof Player){
+									if($this->plugin->disabled->exists($issuer->getName()) !== false){
+										$this->plugin->disabled->remove($issuer->getName());
+										$this->plugin->disabled->save();
+										$issuer->sendMessage($this->plugin->colourMessage("&aYou enabled bloodfx effect on yourself!"));
+										return true;
+									} else{
+										$issuer->sendMessage($this->plugin->colourMessage("&cYou are not a blood_disabled player!"));
+										return true;
+									}
+								} else{
+									$issuer->sendMessage("Command only works in-game!");
+									return true;
+								}
+							} else{
+								$issuer->sendMessage($this->plugin->colourMessage("&cYou don't have permission for this!"));
+								return true;
+							}
+						break;
+						case "off":
+							if($issuer->hasPermission("bloodfx.command") || $issuer->hasPermission("bloodfx.command.off")){
+								if($issuer instanceof Player){
+									if($this->plugin->disabled->exists($issuer->getName()) !== true){
+										$this->plugin->disabled->set($issuer->getName(), true);
+										$this->plugin->disabled->save();
+										$issuer->sendMessage($this->plugin->colourMessage("&aYou disabled bloodfx effect on yourself!"));
+										return true;
+									} else{
+										$issuer->sendMessage($this->plugin->colourMessage("&cYou are a blood_disabled player!"));
+										return true;
+									}
+								} else{
+									$issuer->sendMessage("Command only works in-game!");
+									return true;
+								}
+							} else{
+								$issuer->sendMessage($this->plugin->colourMessage("&cYou don't have permission for this!"));
+								return true;
+							}
+						break;
+						case "help":
+							if($issuer->hasPermission("bloodfx.command") || $issuer->hasPermission("bloodfx.command.help")){
+								$issuer->sendMessage($this->plugin->colourMessage("&l&b#&4- &r&e/blood set <entity> <block_id>"));
+								$issuer->sendMessage($this->plugin->colourMessage("&l&b#&4- &r&e/blood get <entity>"));
+								$issuer->sendMessage($this->plugin->colourMessage("&l&b#&4- &r&e/blood help"));
+								$issuer->sendMessage($this->plugin->colourMessage("&l&b#&4- &r&e/blood list"));
+								$issuer->sendMessage($this->plugin->colourMessage("&l&b#&4- &r&e/blood on|off"));
+								$issuer->sendMessage($this->plugin->colourMessage("&l&b#&4- &r&e/blood reload"));
+								return true;
+							} else{
+								$issuer->sendMessage($this->plugin->colourMessage("&cYou don't have permission for this!"));
+								return true;
+							}
+						break;
+					}
+				} else{
+					return false;
+				}
+			break;
+		}
+	}
+
+}
+?>
